@@ -76,8 +76,7 @@
                 <h2 class="text-center mb-4">Menu</h2>
                 <a href="{{ route('dashboard') }}">Tableau de Bord</a>
                 <a href="{{ route('products.index') }}">Gestion des Produits</a>
-                <a href="">Gestion des Ventes</a>
-                <a href="">Rapports</a>
+                <a href="{{ route('sales.index')}}" >Gestion des Ventes</a>
                 <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Déconnexion</a>
                 <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                     @csrf
@@ -92,19 +91,19 @@
                 <div class="row mb-4">
                     <div class="col-md-4">
                         <div class="stat-card">
-                            <h3>150</h3>
+                            <h3>{{ $ProduitsStock }}</h3>
                             <p>Produits en Stock</p>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="stat-card">
-                            <h3>€5,230</h3>
+                            <h3>{{ number_format($totalRevenue) }} FCFA</h3>
                             <p>Chiffre d'Affaires</p>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="stat-card">
-                            <h3>42</h3>
+                            <h3>{{ $VentesMois }}</h3>
                             <p>Ventes ce Mois</p>
                         </div>
                     </div>
@@ -126,24 +125,14 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>#1001</td>
-                                    <td>2023-10-01</td>
-                                    <td>€120</td>
-                                    <td><span class="badge bg-success">Complété</span></td>
-                                </tr>
-                                <tr>
-                                    <td>#1002</td>
-                                    <td>2023-10-02</td>
-                                    <td>€80</td>
-                                    <td><span class="badge bg-warning">En Attente</span></td>
-                                </tr>
-                                <tr>
-                                    <td>#1003</td>
-                                    <td>2023-10-03</td>
-                                    <td>€200</td>
-                                    <td><span class="badge bg-success">Complété</span></td>
-                                </tr>
+                                @foreach($recentSales as $sale)
+                                    <tr>
+                                        <td>202500{{ $sale->id }}</td>
+                                        <td>{{ $sale->sale_date }}</td>
+                                        <td>{{ number_format($sale->total_amount) }} FCFA</td>
+                                        <td><span class="btn btn-success btn-sm">Validé</span></td>
+                                    </tr>
+                                @endforeach
                             </tbody>
                         </table>
                     </div>
@@ -159,26 +148,20 @@
                             <thead>
                                 <tr>
                                     <th>Produit</th>
+                                    <th>Prix</th>
                                     <th>Stock</th>
                                     <th>Seuil Minimum</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>Produit A</td>
-                                    <td>5</td>
-                                    <td>10</td>
-                                </tr>
-                                <tr>
-                                    <td>Produit B</td>
-                                    <td>8</td>
-                                    <td>15</td>
-                                </tr>
-                                <tr>
-                                    <td>Produit C</td>
-                                    <td>3</td>
-                                    <td>5</td>
-                                </tr>
+                                @foreach($StockFaible as $product)
+                                    <tr>
+                                        <td>{{ $product->name }}</td>
+                                        <td>{{ number_format($product->price) }} FCFA</td>
+                                        <td>{{ $product->quantity }}</td>
+                                        <td>{{ $product->quantity-5 }}</td>
+                                    </tr>
+                                @endforeach
                             </tbody>
                         </table>
                     </div>

@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Testing\Fluent\Concerns\Has;
 
 class Product extends Model
 {
@@ -12,13 +11,16 @@ class Product extends Model
 
     protected $fillable = [
         'name',
-        'description',
         'price',
-        'quantity', // Assurez-vous que 'quantity' est inclus
+        'quantity',
     ];
 
+    // Relation avec plusieurs ventes (many-to-many)
     public function sales()
     {
-    return $this->belongsToMany(Sale::class)->withPivot('quantity', 'unit_price');
+        // Assure-toi que la table pivot 'product_sale' est bien configurée avec les bonnes clés étrangères
+        return $this->belongsToMany(Sale::class, 'product_sale')
+                    ->withPivot('quantity', 'unit_price') // Valeurs supplémentaires dans la table pivot
+                    ->withTimestamps(); // Optionnel : ajoute des timestamps dans la table pivot
     }
 }

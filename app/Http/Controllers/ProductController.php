@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 class ProductController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Afficher la liste des produits.
      */
     public function index()
     {
@@ -17,7 +17,7 @@ class ProductController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Afficher le formulaire de création d'un produit.
      */
     public function create()
     {
@@ -25,67 +25,77 @@ class ProductController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Enregistrer un nouveau produit.
      */
     public function store(Request $request)
     {
+        // Validation des données d'entrée
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'price' => 'required|numeric',
-            'quantity' => 'required|integer', // Validation de la quantité
+            'price' => 'required|numeric|min:0',
+            'quantity' => 'required|integer|min:0', // Validation de la quantité pour ne pas accepter des valeurs négatives
         ]);
 
+        // Créer un produit
         Product::create($request->only(['name', 'description', 'price', 'quantity']));
 
+        // Retourner une réponse avec succès
         return redirect()->route('products.index')->with('success', 'Produit créé avec succès.');
     }
 
     /**
-     * Display the specified resource.
+     * Afficher un produit spécifique.
      */
     public function show(string $id)
     {
-        $product = Product::find($id); // Récupérer le produit par son ID
+        $product = Product::findOrFail($id); // Utilisation de findOrFail pour gérer les erreurs
         return view('products.show', compact('product'));
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Afficher le formulaire de modification d'un produit.
      */
     public function edit(string $id)
     {
-        $product = Product::find($id); // Récupérer le produit par son ID
+        $product = Product::findOrFail($id); // Utilisation de findOrFail pour garantir la validité de l'ID
         return view('products.edit', compact('product'));
     }
 
     /**
-     * Update the specified resource in storage.
+     * Mettre à jour un produit existant.
      */
     public function update(Request $request, string $id)
     {
+        // Validation des données d'entrée
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'price' => 'required|numeric',
-            'quantity' => 'required|integer',
+            'price' => 'required|numeric|min:0',
+            'quantity' => 'required|integer|min:0', // Validation de la quantité
         ]);
 
-        $product = Product::find($id); // Récupérer le produit par son ID
+        // Récupérer le produit et mettre à jour ses données
+        $product = Product::findOrFail($id);
         $product->update($request->all());
 
+        // Retourner une réponse avec succès
         return redirect()->route('products.index')
             ->with('success', 'Produit mis à jour avec succès.');
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Supprimer un produit.
      */
     public function destroy(string $id)
     {
-        $product = Product::find($id); // Récupérer le produit par son ID
+        // Tenter de trouver le produit
+        $product = Product::findOrFail($id);
+
+        // Supprimer le produit
         $product->delete();
 
+        // Retourner une réponse avec succès
         return redirect()->route('products.index')
             ->with('success', 'Produit supprimé avec succès.');
     }

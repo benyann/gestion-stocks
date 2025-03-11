@@ -16,6 +16,7 @@ class Sale extends Model
         'payment_method',
         'paid_amount',
         'change_amount',
+        'customer_name',
     ];
 
     // Relation avec l'utilisateur
@@ -24,11 +25,10 @@ class Sale extends Model
         return $this->belongsTo(User::class);
     }
 
-    // Relation avec les produits
+    // Relation avec plusieurs produits (many-to-many)
+
     public function products()
     {
         return $this->belongsToMany(Product::class)->withPivot('quantity', 'unit_price');
     }
 }
-
-?>
